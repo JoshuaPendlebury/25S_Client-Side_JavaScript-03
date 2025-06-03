@@ -57,6 +57,9 @@ ul{
     width: 5em;
     border-radius: 10px;
 }
+li{
+    text-align: center;
+}
 
 #nounList1, #noun1Button{
     background-color: var(--noun1);
