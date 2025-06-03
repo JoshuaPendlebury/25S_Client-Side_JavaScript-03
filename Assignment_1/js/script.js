@@ -20,39 +20,50 @@ const randStoryBtn = document.querySelector("#randomStory");
 // Declaring story output location
 const storyOut = document.querySelector("#storyOutput");
 
-//Declaring the lists of values for each story segment alongside variables for list index and the selected text
+//Creating Objects to hold the values for each story segment (A list of strings(Chunks of the story), an index value for the list, and a selected value). This allows all values related to a story segment to be easily returned by a function.
 //First noun
-const noun1List = ["Mom", "Dad", "The dog", "A deer", "A spider", "My teacher"];
-let noun1Index = 0;
-let noun1Text = "";
+let noun1Obj = {
+    "list" : ["Mom", "Dad", "The dog", "A deer", "A spider", "My teacher"],
+    "index" : 0,
+    "selected" : ""
+}
 
 //Verb
-const verbList = ["jumped on", "sat on", "danced with", "stepped on", "saw", "ate"];
-let verbIndex = 0;
-let verbText = "";
+let verbObj = {
+    "list" : ["jumped on", "sat on", "danced with", "stepped on", "saw", "ate"],
+    "index" : 0,
+    "selected" : ""
+}
 
 //Adjective
-const adjList = ["a smelly", "a soft", "a scary", "a funny", "a dirty", "a barking"];
-let adjIndex = 0;
-let adjText = "";
+let adjObj = {
+    "list" : ["a smelly", "a soft", "a scary", "a funny", "a dirty", "a barking"],
+    "index" : 0,
+    "selected" : ""
+}
 
 //Second noun
-const noun2List = ["chair", "cat", "apple", "elephant", "cow", "sheep", ];
-let noun2Index = 0;
-let noun2Text = "";
+let noun2Obj = {
+    "list" : ["chair", "cat", "apple", "elephant", "cow", "sheep"],
+    "index" : 0,
+    "selected" : ""
+}
 
 //Location
-const locationList = ["on the Moon", "in the forest", "in my soup", "at home", "at Walmart", "at school"];
-let locationIndex = 0;
-let locationText = "";
+let locationObj = {
+    "list" : ["on the Moon", "in the forest", "in my soup", "at home", "at Walmart", "at school"],
+    "index" : 0,
+    "selected" : ""
+}
 
 //EVENT LISTENERS
 //Listening for list cycling buttons
-noun1Btn.addEventListener("click", changeNoun1Values);
-verbBtn.addEventListener("click", changeVerbValues);
-adjBtn.addEventListener("click", changeAdjValues);
-noun2Btn.addEventListener("click", changeNoun2Values);
-locationBtn.addEventListener("click", changeLocationValues);
+    //Found a way to pass parameters to a function using arrow function expressions on stack overflow https://stackoverflow.com/questions/10000083/javascript-event-handler-with-parameters
+noun1Btn.addEventListener("click", () => noun1Obj = changeStoryValues(noun1Obj, noun1Btn));
+verbBtn.addEventListener("click", () => verbObj = changeStoryValues(verbObj, verbBtn));
+adjBtn.addEventListener("click", () => adjObj = changeStoryValues(adjObj, adjBtn));
+noun2Btn.addEventListener("click", () => noun2Obj = changeStoryValues(noun2Obj, noun2Btn));
+locationBtn.addEventListener("click", () => locationObj = changeStoryValues(locationObj, locationBtn));
 
 //Listening for story submit button
 storyBtn.addEventListener("click", printStory);
@@ -62,67 +73,29 @@ randStoryBtn.addEventListener("click", randomStory);
 
 // FUNCTIONS
 
-function changeNoun1Values() {
+function changeStoryValues(storyObj, button) {
     //Checking if the index variable is out of range and if so setting it to 0
-    if(noun1Index >= noun1List.length || noun1Index < 0){
-        noun1Index = 0;
+    if(storyObj["index"] >= storyObj["list"].length || storyObj["index"] < 0){
+        storyObj["index"] = 0;
     }
 
-    noun1Text = noun1List[noun1Index];
-    noun1Btn.textContent = noun1Text;
-    //Printing value to console for debug checking
-    //console.log(`noun1Text = ${noun1Text}`);
+    //Changing the selected value to the list value of the current index
+    storyObj["selected"] = storyObj["list"][storyObj["index"]];
+
+    //Printing the selected text to the button so you can see what is selected
+    button.textContent = storyObj["selected"];
+
     //Incrementing the index for the next press
-    noun1Index++;
-}
-//Copies of changeNoun1Values() renamed with appropriate variables for every other story chunk (I feel like there should be a way to do this with 1 function instead, might come back to this later.)
-    //Comments were removed from the copies because they seem like a redundant waste of lines
-function changeVerbValues() {
-    if(verbIndex >= verbList.length || verbIndex < 0){
-        verbIndex = 0;
-    }
+    storyObj["index"]++;
 
-    verbText = verbList[verbIndex];
-    verbBtn.textContent = verbText;
-    //console.log(`verbText = ${verbText}`);
-    verbIndex++;
+    //Returns object to update the global object that was passed into this function
+    return storyObj;
 }
-function changeAdjValues() {
-    if(adjIndex >= adjList.length || adjIndex < 0){
-        adjIndex = 0;
-    }
-
-    adjText = adjList[adjIndex];
-    adjBtn.textContent = adjText;
-    //console.log(`adjText = ${adjText}`);
-    adjIndex++;
-}
-function changeNoun2Values() {
-    if(noun2Index >= noun2List.length || noun2Index < 0){
-        noun2Index = 0;
-    }
-
-    noun2Text = noun2List[noun2Index];
-    noun2Btn.textContent = noun2Text;
-    //console.log(`noun2Text = ${noun2Text}`);
-    noun2Index++;
-}
-function changeLocationValues() {
-    if(locationIndex >= locationList.length || locationIndex < 0){
-        locationIndex = 0;
-    }
-
-    locationText = locationList[locationIndex];
-    locationBtn.textContent = locationText;
-    //console.log(`location = ${locationText}`);
-    locationIndex++;
-}
-
 
 //Constructs and prints selected story
 function printStory() {
     //Using string literals to construct the story string out of the button selections
-    let story = `${noun1Text} ${verbText} ${adjText} ${noun2Text} ${locationText}.`;
+    let story = `${noun1Obj["selected"]} ${verbObj["selected"]} ${adjObj["selected"]} ${noun2Obj["selected"]} ${locationObj["selected"]}.`;
     //Prints constructed story string to the page
     storyOut.textContent = story;
 }
@@ -130,7 +103,7 @@ function printStory() {
 //Constructs and prints randomized story
 function randomStory() {
     //Using string literals to construct the story string out of random list items using randomSel function
-    let story = `${randomSel(noun1List)} ${randomSel(verbList)} ${randomSel(adjList)} ${randomSel(noun2List)} ${randomSel(locationList)}.`
+    let story = `${randomSel(noun1Obj["list"])} ${randomSel(verbObj["list"])} ${randomSel(adjObj["list"])} ${randomSel(noun2Obj["list"])} ${randomSel(locationObj["list"])}.`
     //Prints constructed story string to the page
     storyOut.textContent = story;
 }
